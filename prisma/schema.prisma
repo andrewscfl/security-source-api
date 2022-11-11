@@ -1,0 +1,65 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// model User {
+//   id    Int     @id @default(autoincrement())
+//   email String  @unique
+//   name  String?
+//   posts Post[]
+// }
+
+// model Post {
+//   id        Int     @id @default(autoincrement())
+//   title     String
+//   content   String?
+//   published Boolean @default(false)
+//   author    User    @relation(fields: [authorId], references: [id])
+//   authorId  Int
+// }
+
+model Account {
+  id           Int           @id @default(autoincrement())
+  username     String        @unique
+  password     String
+  Organization Organization?
+}
+
+model Organization {
+  id        Int     @id @default(autoincrement())
+  name      String
+  owner     Account @relation(fields: [accountId], references: [id])
+  accountId Int     @unique
+  Test      Test[]
+}
+
+model Test {
+  id             Int          @id @default(autoincrement())
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  type           String
+  Entry          Entry[]
+  organizationId Int
+}
+
+model Entry {
+  id         Int      @id @default(autoincrement())
+  employee   Employee @relation(fields: [employeeId], references: [id])
+  test       Test     @relation(fields: [testId], references: [id])
+  passed     Boolean
+  testId     Int
+  employeeId Int
+}
+
+model Employee {
+  id    Int     @id @default(autoincrement())
+  email String
+  Entry Entry[]
+}
