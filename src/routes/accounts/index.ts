@@ -1,25 +1,29 @@
 import express, { Request, Response, Router } from 'express'
 import { GlobalRouteHandler } from '../types'
 import { PrismaClient, Organization } from '@prisma/client'
-import {createAccountWithOrganization} from '../../utils/account'
+import { checkOnlyEmail } from './helpers'
 
 const prisma = new PrismaClient()
 const accountRoutes: Router = express.Router()
 
 
-accountRoutes.post('/create-account', async (req: Request, res: Response) => {
+accountRoutes.post('/register', async (req: Request, res: Response) => {
     try {
-        const username: string = req.body.username
-        const password: string = req.body.password
-        const organization: Organization = req.body.organization
-        if (organization) {
-            const success = await createAccountWithOrganization(username, password, organization)
-            //TODO make success object that returns most up to date json
-        }
+        const {email,password,organizationName} : {email: string, password: string, organizationName: string} = req.body
+        if(!email || !password || !organizationName) throw "Missing Parameters"
+        const emailIsUnique = await checkOnlyEmail(email)
+        console.log(emailIsUnique)
+        res.status(200).json({data: ''})
+
+       
     } catch (error) {
-        return res.status(500).send('error')
+        return res.status(500).json({
+            data: error
+        })
     }
 })
+
+accountRoutes.get('/',(req,res) => res.send('test'))
 
 
 
