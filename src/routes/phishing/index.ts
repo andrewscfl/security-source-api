@@ -17,6 +17,8 @@ phishingRoutes.post('/phishing-exam', async (req : Request, res: Response) => {
     }
 })
 
+phishingRoutes.get('/', (req, res) => res.send('test'))
+
 
 
 const PhishingRoutes: GlobalRouteHandler = {

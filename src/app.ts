@@ -1,7 +1,8 @@
 import express, { Application } from 'express'
 import dotenv from 'dotenv'
 import { PrismaClient } from '@prisma/client'
-import GlobalRoutes from './routes'
+import {GlobalRoutes, ProtectedRoutes} from './routes'
+import { authenticate } from './middleware/auth'
 
 const app: Application = express()
 dotenv.config()
@@ -11,8 +12,11 @@ async function main() {
     //request parsing
     app.use(express.json());
     
-    //registered all exported routes
+    //register all non-auth routes
     GlobalRoutes.forEach(route => app.use(route.path, route.handler) )
+
+    //register all authenticated routes
+    ProtectedRoutes.forEach(route => app.use(route.path, authenticate, route.handler) )
 
     app.listen(process.env.HOST_PORT, () => {
         console.log(`Server running on port ${String(process.env.HOST_PORT)}`)
