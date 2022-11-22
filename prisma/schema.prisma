@@ -54,13 +54,12 @@ model Entry {
   id         Int      @id @default(autoincrement())
   employee   Employee @relation(fields: [employeeId], references: [id])
   test       Test     @relation(fields: [testId], references: [id])
-  passed     Boolean
   testId     Int
   employeeId Int
 }
 
 model Employee {
   id    Int     @id @default(autoincrement())
-  email String
+  email String @unique
   Entry Entry[]
 }

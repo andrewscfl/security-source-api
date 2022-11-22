@@ -1,5 +1,4 @@
 import express, { Request, Response, Router } from 'express'
-import { GlobalRouteHandler } from '../types'
 import { PrismaClient, Organization, Account } from '@prisma/client'
 import { checkOnlyEmail, createAccount, findAccount } from './helpers'
 import bcrypt from 'bcryptjs'
