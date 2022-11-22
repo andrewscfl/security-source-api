@@ -1,5 +1,5 @@
 import express, { Request, Response, Router } from 'express'
-import { createPhishingEntry, createPhishingTest } from './helpers'
+import { createPhishingEntry, createPhishingTest, getActivePhishingTests } from './helpers'
 const protectedPhishingRoutes: Router = express.Router()
 const openPhishingRoutes: Router = express.Router()
 
@@ -21,11 +21,23 @@ openPhishingRoutes.post('/phishing-exam', async (req: Request, res: Response) =>
 protectedPhishingRoutes.get('/create-phishing-exam', async (req: Request, res: Response) => {
     try {
         const accountId = req?.user?.user_id
-        if(!accountId) throw new Error('No account id attached')
+        if (!accountId) throw new Error('No account id attached')
         const createdTest = await createPhishingTest(accountId)
-        if(!createdTest) throw new Error('Error while creating new test')
+        if (!createdTest) throw new Error('Error while creating new test')
         return res.status(200).json({ data: createdTest })
 
+    } catch (error) {
+        return res.status(500).json({ data: error })
+    }
+})
+
+protectedPhishingRoutes.get('/active-phishing-campaigns', async (req: Request, res: Response) => {
+    try {
+        const accountId = req?.user?.user_id
+        if (!accountId) throw new Error('No account id attached')
+        const phishingData = await getActivePhishingTests(accountId)
+        if(!phishingData) throw new Error('Error pulling phishing data')
+        return res.status(200).json({ data: phishingData })
     } catch (error) {
         return res.status(500).json({ data: error })
     }
@@ -43,5 +55,5 @@ const OpenPhishingRoutes: GlobalRouteHandler = {
     handler: openPhishingRoutes
 }
 
-export  {ProtectedPhishingRoutes, OpenPhishingRoutes}
+export { ProtectedPhishingRoutes, OpenPhishingRoutes }
 
