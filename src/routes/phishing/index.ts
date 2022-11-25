@@ -1,4 +1,5 @@
 import express, { Request, Response, Router } from 'express'
+import moment from 'moment'
 import { createPhishingEntry, createPhishingTest, getActivePhishingTests } from './helpers'
 const protectedPhishingRoutes: Router = express.Router()
 const openPhishingRoutes: Router = express.Router()
@@ -8,8 +9,9 @@ openPhishingRoutes.post('/phishing-exam', async (req: Request, res: Response) =>
     try {
         const email: string = req.body?.email
         const testId: number = req.body?.testId
+        const timestamp = moment().toISOString()
         if (!(email && testId)) throw new Error('incorrectly formatted post')
-        const success = await createPhishingEntry(email, testId)
+        const success = await createPhishingEntry(email, testId, timestamp)
         if (!success) throw new Error('Error creating or linking accounts')
         return res.status(200).json({ data: 'OK' })
 

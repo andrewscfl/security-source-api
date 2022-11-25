@@ -53,6 +53,7 @@ model Test {
 model Entry {
   id         Int      @id @default(autoincrement())
   employee   Employee @relation(fields: [employeeId], references: [id])
+  timestamp  String
   test       Test     @relation(fields: [testId], references: [id])
   testId     Int
   employeeId Int

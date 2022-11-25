@@ -1,7 +1,7 @@
 import { PrismaClient, Test, Organization, Entry, Employee, Account } from '@prisma/client'
 const prisma = new PrismaClient()
 
-export async function createPhishingEntry(email: string, testId: number): Promise<boolean> {
+export async function createPhishingEntry(email: string, testId: number, timestamp: string): Promise<boolean> {
     try {
         const phishedEmployee: Employee | null = await prisma.employee.upsert({
             where: { email: email },
@@ -9,14 +9,16 @@ export async function createPhishingEntry(email: string, testId: number): Promis
                 email,
                 Entry: {
                     create: {
-                        testId: testId
+                        testId: testId,
+                        timestamp: timestamp
                     }
                 }
             },
             update: {
                 Entry: {
                     create: {
-                        testId: testId
+                        testId: testId,
+                        timestamp: timestamp
                     }
                 }
             }
