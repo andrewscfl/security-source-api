@@ -1,6 +1,7 @@
 import express, { Request, Response, Router } from 'express'
 import moment from 'moment'
-import { createPhishingEntry, createPhishingTest, getActivePhishingTests } from './helpers'
+import { emailTemplate1 } from './assets/emailtemplate'
+import { createPhishingEntry, createPhishingTest, getActivePhishingTests, sendPhishingEmails } from './helpers'
 const protectedPhishingRoutes: Router = express.Router()
 const openPhishingRoutes: Router = express.Router()
 
@@ -38,14 +39,24 @@ protectedPhishingRoutes.get('/active-phishing-campaigns', async (req: Request, r
         const accountId = req?.user?.user_id
         if (!accountId) throw new Error('No account id attached')
         const phishingData = await getActivePhishingTests(accountId)
-        if(!phishingData) throw new Error('Error pulling phishing data')
+        if (!phishingData) throw new Error('Error pulling phishing data')
         return res.status(200).json({ data: phishingData })
     } catch (error) {
         return res.status(500).json({ data: error })
     }
 })
 
-protectedPhishingRoutes.get('/', (req, res) => res.send('test'))
+protectedPhishingRoutes.post('/send-phishing-emails', async (req: Request, res: Response) => {
+    try {
+        const bccList : Array<string> = req.body?.bccList
+        const testId : number = req.body?.testId
+        const success = await sendPhishingEmails(bccList,testId)
+    } catch (error) {
+        return res.status(500).json({ data: error })
+    }
+})
+
+openPhishingRoutes.get('/', (req, res) => res.send(emailTemplate1(1)))
 
 const ProtectedPhishingRoutes: GlobalRouteHandler = {
     path: '/api/phishing',

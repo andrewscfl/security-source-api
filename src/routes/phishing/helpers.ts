@@ -1,4 +1,6 @@
 import { PrismaClient, Test, Organization, Entry, Employee, Account } from '@prisma/client'
+import { emailTemplate1 } from './assets/emailtemplate'
+
 const prisma = new PrismaClient()
 
 export async function createPhishingEntry(email: string, testId: number, timestamp: string): Promise<boolean> {
@@ -25,6 +27,7 @@ export async function createPhishingEntry(email: string, testId: number, timesta
         })
         return !!(phishedEmployee)
     } catch (error) {
+        console.log(error)
         return false
     }
 }
@@ -45,6 +48,7 @@ export async function createPhishingTest(accountId: number): Promise<Test | bool
         })
         return newTest
     } catch (error) {
+        console.log(error)
         return false
     }
 }
@@ -69,6 +73,25 @@ export async function getActivePhishingTests(accountId: number): Promise<Organiz
         if (!populatedAccount) throw new Error('could not query account')
         return populatedAccount
     } catch (error) {
+        console.log(error)
+        return false
+    }
+}
+
+export async function sendPhishingEmails(bccList: Array<string>, testId: number) : Promise<boolean> {
+    try {
+        if(Array.isArray(bccList) && bccList.length < 20 && testId){
+            const emailTemplate = emailTemplate1(testId)
+            
+
+
+            return true
+        }
+        else {
+            throw new Error('Bcc list too long or no testid')
+        }
+    } catch (error) {
+        console.log(error)
         return false
     }
 }

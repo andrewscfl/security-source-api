@@ -3,6 +3,7 @@ import dotenv from 'dotenv'
 import { PrismaClient } from '@prisma/client'
 import {GlobalRoutes, ProtectedRoutes} from './routes'
 import { authenticate } from './middleware/auth'
+import path from 'path'
 import cors from 'cors'
 
 const app: Application = express()
@@ -15,6 +16,9 @@ async function main() {
 
     //enable requests from all origin
     app.use(cors())
+
+    //serve assets for emails
+    app.use("/assets", express.static(__dirname + '/assets'));
     
     //register all non-auth routes
     GlobalRoutes.forEach(route => app.use(route.path, route.handler) )
