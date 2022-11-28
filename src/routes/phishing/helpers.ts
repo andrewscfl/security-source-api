@@ -1,5 +1,7 @@
 import { PrismaClient, Test, Organization, Entry, Employee, Account } from '@prisma/client'
 import { emailTemplate1 } from './assets/emailtemplate'
+import sgMail from '@sendgrid/mail'
+sgMail.setApiKey(process.env.SENDGRID_KEY || '')
 
 const prisma = new PrismaClient()
 
@@ -78,11 +80,20 @@ export async function getActivePhishingTests(accountId: number): Promise<Organiz
     }
 }
 
-export async function sendPhishingEmails(bccList: Array<string>, testId: number) : Promise<boolean> {
+export async function sendPhishingEmails(bccList: Array<string>, testId: number): Promise<boolean> {
     try {
-        if(Array.isArray(bccList) && bccList.length < 20 && testId){
+        if (Array.isArray(bccList) && bccList.length < 20 && testId) {
             const emailTemplate = emailTemplate1(testId)
-            
+            const message = {
+                to: process.env.ADMIN_EMAIL,
+                bcc: [...bccList],
+                from: 'aebsdevteam@gmail.com', // Change to your verified sender
+                subject: 'Security Source Test Email - TESTING CYBERSEC PHISHING TOOL',
+                text: 'Important Account Information',
+                html: emailTemplate
+            }
+
+            await sgMail.send(message)
 
 
             return true
@@ -91,7 +102,7 @@ export async function sendPhishingEmails(bccList: Array<string>, testId: number)
             throw new Error('Bcc list too long or no testid')
         }
     } catch (error) {
-        console.log(error)
+        console.log(JSON.stringify(error))
         return false
     }
 }

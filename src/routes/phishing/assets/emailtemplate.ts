@@ -8,13 +8,13 @@ export function emailTemplate1(testId: number): string {
         <p style="text-align:center; padding-top: 5px; padding-bottom: 5px;">
             <img src="${baseUrl}/assets/micosoft-phishing-icon.png">
         </p>
-        <p>Dear user, There has been suspicious activity detected on yours account.</p>
-        <p>please login with your username and password below in order to ensure your account remains secure</p>
+        <p>This is a phishing proof of concept email</p>
+        <p>Opening an email like this in a non-internal testing situation could lead to credentials being stolen</p>
         <p>Best,</p>
-        <p style="padding-bottom: 30px;">Mircrosoft Support</p>
+        <p style="padding-bottom: 30px;">Security Source</p>
         <p style="text-align: center">
             <a href="${phishUrl}?testId=${String(testId)}" style="background-color: #00a4ef; padding-right: 100px; padding-left: 100px; padding-top: 10px; padding-bottom: 10px;">
-                <span style="color: white; text-align-center; text-decoration: none; text-underline: none; font-family: sans-serif;">Reset Password</span>
+                <span style="color: white; text-align-center; text-decoration: none; text-underline: none; font-family: sans-serif;">Go to mock landing page</span>
             </a>
         </p>
     </div>
