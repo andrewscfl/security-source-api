@@ -14,7 +14,7 @@ accountRoutes.post('/register', async (req: Request, res: Response): Promise<Res
         if (!email || !password || !organizationName) throw new Error("Missing Parameters")
         const emailIsUnique = await checkOnlyEmail(email)
         if (!emailIsUnique) throw new Error("Email is not unique")
-        const hashedPassword = await bcrypt.hash(password, 10)
+        const hashedPassword = await bcrypt.hash(password, <string>process.env.SALT)
         const account = await createAccount(email, hashedPassword, organizationName)
         if (!account) throw new Error('Account Creation Error')
         return res.status(200).json({ success: true })
@@ -31,7 +31,7 @@ accountRoutes.post('/login', async(req: Request, res: Response): Promise<Respons
         const {email, password} : {email: string, password: string} = req.body
         if(!(email && password)) throw new Error('No Username/Password')
         const account = await findAccount(email)
-        const hashedPassword = await bcrypt.hash(password, 10)
+        const hashedPassword = await bcrypt.hash(password, <string>process.env.SALT)
         console.log(account, hashedPassword)
         if(account && (<Account>account).password && hashedPassword === (<Account>account).password  ){
             const token = jwt.sign({ user_id: (<Account>account).id, email }, <string>(process.env.TOKEN_KEY), {
