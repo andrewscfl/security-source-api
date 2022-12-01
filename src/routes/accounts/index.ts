@@ -31,10 +31,14 @@ accountRoutes.post('/login', async(req: Request, res: Response): Promise<Respons
         const {email, password} : {email: string, password: string} = req.body
         if(!(email && password)) throw new Error('No Username/Password')
         const account = await findAccount(email)
-        const token = jwt.sign({ user_id: (<Account>account).id, email }, <string>(process.env.TOKEN_KEY), {
-            expiresIn: '10h'
-        })
-        return res.status(200).json({ token })
+        const hashedPassword = await bcrypt.hash(password, 10)
+        if(account && (<Account>account).password && hashedPassword === (<Account>account).password  ){
+            const token = jwt.sign({ user_id: (<Account>account).id, email }, <string>(process.env.TOKEN_KEY), {
+                expiresIn: '10h'
+            })
+            return res.status(200).json({ token })
+        }
+        else throw new Error('account not found or password incorrect')
 
     } catch (error) {
         return res.status(500).json({
